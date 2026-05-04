@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jane Doe — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper:    #f4f2ed;
+      --ink:      #151412;
+      --mid:      #5a5751;
+      --faint:    #c8c4bb;
+      --rule:     #d4d0c9;
+      --hover:    #eae7e1;
+      --mono:     'Space Mono', monospace;
+      --serif:    'Crimson Pro', Georgia, serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 16px;
+      line-height: 1.7;
+      /* subtle grain */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='0.035'/%3E%3C/svg%3E");
+    }
+
+    /* ─── UTILITY ─── */
+    .label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--mid);
+    }
+    .rule-top    { border-top:    1px solid var(--rule); }
+    .rule-bottom { border-bottom: 1px solid var(--rule); }
+    .rule-ink    { border-bottom: 1px solid var(--ink); }
+
+    /* ─── CURSOR ─── */
+    body { cursor: crosshair; }
+    a, button, [data-section] { cursor: crosshair; }
+
+    /* ─── NAV ─── */
+    #nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 1.25rem 2.5rem 1rem;
+      background: var(--paper);
+      border-bottom: 1px solid var(--ink);
+      transition: border-color 0.3s;
+    }
+    #nav .site-name {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+    #nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2.25rem;
+    }
+    #nav ul li a {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--faint);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    #nav ul li a:hover,
+    #nav ul li a.active { color: var(--ink); }
+
+    /* ─── HERO ─── */
+    #hero {
+      padding: 9rem 2.5rem 5rem;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 4rem;
+      align-items: end;
+      border-bottom: 1px solid var(--rule);
+      min-height: 100vh;
+    }
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .hero-eyebrow::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--rule);
+    }
+    .hero-name {
+      font-family: var(--mono);
+      font-size: clamp(38px, 6vw, 72px);
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      margin-bottom: 1.75rem;
+    }
+    .hero-name em {
+      font-style: italic;
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 0.72em;
+      display: block;
+      letter-spacing: 0.01em;
+      color: var(--mid);
+    }
+    .hero-bio {
+      font-family: var(--serif);
+      font-size: 17px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--mid);
+      max-width: 500px;
+      line-height: 1.8;
+    }
+    .hero-meta {
+      border-top: 1px solid var(--rule);
+      padding-top: 2rem;
+    }
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    .meta-row .meta-key  { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--faint); }
+    .meta-row .meta-val  { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--ink); }
+
+    /* ─── SECTION CHROME ─── */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2.5rem;
+      background: var(--hover);
+      border-bottom: 1px solid var(--rule);
+      position: sticky;
+      top: 57px;
+      z-index: 50;
+    }
+    .section-count {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      color: var(--faint);
+    }
+
+    /* ─── ABOUT ─── */
+    #about {
+      padding: 5rem 2.5rem;
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 5rem;
+      border-bottom: 1px solid var(--rule);
+    }
+    #about .about-side { padding-top: 0.3rem; }
+    .about-body p {
+      font-size: 18px;
+      font-weight: 300;
+      line-height: 1.85;
+      color: var(--ink);
+      margin-bottom: 1.25rem;
+    }
+    .about-body p:last-child { margin-bottom: 0; }
+
+    /* ─── EDUCATION GRID ─── */
+    #education { border-bottom: 1px solid var(--rule); }
+    .edu-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-left: 1px solid var(--rule);
+    }
+    .edu-cell {
+      border-right: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 2.25rem 2rem 2rem;
+      transition: background 0.2s;
+    }
+    .edu-cell:hover { background: var(--hover); }
+    .cell-index {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      color: var(--faint);
+      margin-bottom: 1.5rem;
+    }
+    .cell-title {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.35;
+      margin-bottom: 0.35rem;
+    }
+    .cell-sub {
+      font-family: var(--serif);
+      font-size: 14px;
+      font-style: italic;
+      font-weight: 300;
+      color: var(--mid);
+      margin-bottom: 1rem;
+    }
+    .cell-desc {
+      font-family: var(--serif);
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--mid);
+      line-height: 1.7;
+    }
+    .cell-year {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      color: var(--faint);
+      margin-top: 1.5rem;
+    }
+
+    /* ─── PROJECTS ─── */
+    #projects { border-bottom: 1px solid var(--rule); }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      border-left: 1px solid var(--rule);
+    }
+    .project-cell {
+      border-right: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 2.5rem 2.25rem 2.25rem;
+      transition: background 0.2s;
+      position: relative;
+    }
+    .project-cell:hover { background: var(--hover); }
+    .project-cell a.project-link {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      color: var(--faint);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .project-cell:hover a.project-link { color: var(--ink); }
+    .project-cell .cell-title { font-size: 15px; margin-bottom: 0.5rem; }
+    .project-cell .cell-desc  { font-size: 14px; line-height: 1.75; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 1.25rem; }
+    .tag {
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      border: 1px solid var(--rule);
+      padding: 3px 8px;
+      color: var(--mid);
+    }
+
+    /* ─── SKILLS ─── */
+    #skills { border-bottom: 1px solid var(--rule); }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-left: 1px solid var(--rule);
+    }
+    .skill-col {
+      border-right: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 2rem;
+    }
+    .skill-heading {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--rule);
+    }
+    .skill-entry {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.4rem 0;
+    }
+    .skill-name {
+      font-family: var(--serif);
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--ink);
+    }
+    .skill-dot-row { display: flex; gap: 3px; }
+    .dot {
+      width: 5px;
+      height: 5px;
+      border: 1px solid var(--ink);
+      border-radius: 50%;
+    }
+    .dot.filled { background: var(--ink); }
+
+    /* ─── CONTACT ─── */
+    #contact {
+      padding: 5rem 2.5rem;
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 5rem;
+    }
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .contact-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 0;
+      border-bottom: 1px solid var(--rule);
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .contact-row:hover .contact-arrow { opacity: 1; transform: translateX(0); }
+    .contact-platform {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--faint);
+      min-width: 90px;
+    }
+    .contact-value {
+      font-family: var(--serif);
+      font-size: 15px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--ink);
+      flex: 1;
+      padding: 0 1.5rem;
+    }
+    .contact-arrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--mid);
+      opacity: 0;
+      transform: translateX(-6px);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      padding: 1rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid var(--ink);
+      background: var(--ink);
+    }
+    footer span {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      color: #666;
+    }
+    footer span a {
+      color: #888;
+      text-decoration: none;
+    }
+
+    /* ─── PAGE LOAD ANIMATION ─── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      #hero            { grid-template-columns: 1fr; min-height: auto; padding-top: 7rem; }
+      .hero-meta       { border-top: 1px solid var(--rule); padding-top: 1.5rem; }
+      #about           { grid-template-columns: 1fr; gap: 2rem; }
+      #contact         { grid-template-columns: 1fr; gap: 2rem; }
+      .edu-grid        { grid-template-columns: 1fr; }
+      .projects-grid   { grid-template-columns: 1fr; }
+      .skills-grid     { grid-template-columns: repeat(2, 1fr); }
+      #nav             { padding: 1rem 1.25rem 0.9rem; }
+      #hero            { padding: 7rem 1.25rem 3rem; }
+      #about, #contact { padding: 3rem 1.25rem; }
+      .section-header  { padding: 0.9rem 1.25rem; }
+      .edu-cell, .project-cell, .skill-col { padding: 1.5rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAV ─── -->
+  <nav id="nav">
+    <span class="site-name">Jane Doe</span>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- ─── HERO ─── -->
+  <section id="hero">
+    <div>
+      <div class="hero-eyebrow">
+        <span class="label">— Portfolio / CV</span>
+      </div>
+      <h1 class="hero-name">
+        Jane<br>
+        Doe
+        <em>Software Engineer</em>
+      </h1>
+      <p class="hero-bio">
+        Building robust systems at the intersection of infrastructure and product.
+        Based in Amsterdam, available for new opportunities.
+      </p>
+    </div>
+    <div class="hero-meta fade-in">
+      <div class="meta-row">
+        <span class="meta-key">Status</span>
+        <span class="meta-val">Open to roles</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-key">Experience</span>
+        <span class="meta-val">8 years</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-key">Location</span>
+        <span class="meta-val">Amsterdam, NL</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-key">Focus</span>
+        <span class="meta-val">Backend / Infra</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── ABOUT ─── -->
+  <section id="about" class="fade-in">
+    <div class="about-side">
+      <span class="label">— About</span>
+    </div>
+    <div class="about-body">
+      <p>
+        I'm a software engineer with eight years of experience building scalable backend systems,
+        distributed infrastructure, and developer tooling. I care deeply about code that is readable,
+        tested, and built to last.
+      </p>
+      <p>
+        I've worked across early-stage startups and larger engineering organisations, and I'm
+        comfortable switching between fast-moving product work and slower, more deliberate
+        platform engineering.
+      </p>
+      <p>
+        Outside of work I photograph industrial landscapes, read too much philosophy of technology,
+        and cycle long distances at unreasonable hours.
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── EDUCATION ─── -->
+  <section id="education" class="fade-in">
+    <div class="section-header">
+      <span class="label">— Education</span>
+      <span class="section-count">02 entries</span>
+    </div>
+    <div class="edu-grid">
+
+      <div class="edu-cell">
+        <div class="cell-index">001</div>
+        <div class="cell-title">MSc Computer Science</div>
+        <div class="cell-sub">University of Amsterdam</div>
+        <div class="cell-desc">Specialisation in distributed systems and fault-tolerant computing. Thesis on consensus algorithms in heterogeneous networks.</div>
+        <div class="cell-year">2014 — 2016</div>
+      </div>
+
+      <div class="edu-cell">
+        <div class="cell-index">002</div>
+        <div class="cell-title">BSc Computer Science</div>
+        <div class="cell-sub">Delft University of Technology</div>
+        <div class="cell-desc">Core studies in algorithms, systems programming, and software engineering. Graduated with distinction.</div>
+        <div class="cell-year">2010 — 2014</div>
+      </div>
+
+      <!-- empty cell for visual balance, can remove if you add a 3rd entry -->
+      <div class="edu-cell" style="background: repeating-linear-gradient(45deg, transparent, transparent 6px, rgba(0,0,0,0.018) 6px, rgba(0,0,0,0.018) 7px);"></div>
+
+    </div>
+  </section>
+
+  <!-- ─── PROJECTS ─── -->
+  <section id="projects" class="fade-in">
+    <div class="section-header">
+      <span class="label">— Projects</span>
+      <span class="section-count">04 entries</span>
+    </div>
+    <div class="projects-grid">
+
+      <div class="project-cell">
+        <a class="project-link" href="#" target="_blank">github ↗</a>
+        <div class="cell-index">001</div>
+        <div class="cell-title">Rift</div>
+        <div class="cell-sub">Distributed task queue</div>
+        <div class="cell-desc">A lightweight, Redis-backed task queue with at-least-once delivery guarantees. Built to replace Celery in latency-sensitive environments. 3k stars on GitHub.</div>
+        <div class="tags">
+          <span class="tag">Python</span>
+          <span class="tag">Redis</span>
+          <span class="tag">Open source</span>
+        </div>
+        <div class="cell-year">2023</div>
+      </div>
+
+      <div class="project-cell">
+        <a class="project-link" href="#" target="_blank">github ↗</a>
+        <div class="cell-index">002</div>
+        <div class="cell-title">Ledger</div>
+        <div class="cell-sub">Double-entry accounting engine</div>
+        <div class="cell-desc">Immutable, append-only accounting library for financial applications. Supports multi-currency and partial reconciliation. Used in production by two fintech startups.</div>
+        <div class="tags">
+          <span class="tag">Go</span>
+          <span class="tag">PostgreSQL</span>
+        </div>
+        <div class="cell-year">2022</div>
+      </div>
+
+      <div class="project-cell">
+        <a class="project-link" href="#" target="_blank">github ↗</a>
+        <div class="cell-index">003</div>
+        <div class="cell-title">Haze</div>
+        <div class="cell-sub">Feature flag service</div>
+        <div class="cell-desc">Self-hosted feature flag and A/B testing platform. Sub-millisecond flag evaluation via in-memory store. Docker-native, single binary deployment.</div>
+        <div class="tags">
+          <span class="tag">Go</span>
+          <span class="tag">Docker</span>
+          <span class="tag">gRPC</span>
+        </div>
+        <div class="cell-year">2021</div>
+      </div>
+
+      <div class="project-cell">
+        <a class="project-link" href="#" target="_blank">writeup ↗</a>
+        <div class="cell-index">004</div>
+        <div class="cell-title">Consensus under partition</div>
+        <div class="cell-sub">Research / writing</div>
+        <div class="cell-desc">Long-form technical essay exploring the practical implications of the CAP theorem, with case studies from real distributed systems failures. 40k reads on Medium.</div>
+        <div class="tags">
+          <span class="tag">Writing</span>
+          <span class="tag">Systems</span>
+        </div>
+        <div class="cell-year">2020</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── SKILLS ─── -->
+  <section id="skills" class="fade-in">
+    <div class="section-header">
+      <span class="label">— Skills</span>
+      <span class="section-count">04 categories</span>
+    </div>
+    <div class="skills-grid">
+
+      <div class="skill-col">
+        <div class="skill-heading">Languages</div>
+        <div class="skill-entry"><span class="skill-name">Python</span>      <div class="skill-dot-row"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+        <div class="skill-entry"><span class="skill-name">Go</span>          <div class="skill-dot-row"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+        <div class="skill-entry"><span class="skill-name">TypeScript</span> <div class="skill-dot-row"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+        <div class="skill-entry"><span class="skill-name">Rust</span>        <div class="skill-dot-row"><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+        <div class="skill-entry"><span class="skill-name">SQL</span>         <div class="skill-dot-row"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+      </div>
+
+      <div class="skill-col">
+        <div class="skill-heading">Infrastructure</div>
+        <div class="skill-entry"><span class="skill-name">AWS</span>         <div class="skill-dot-row"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+        <div class="skill-entry"><span class="skill-name">Kubernetes</span> <div class="skill-dot-row"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+        <div class="skill-entry"><span class="skill-name">Terraform</span>  <div class="skill-dot-row"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+        <div class="skill-entry"><span class="skill-name">Docker</span>     <div class="skill-dot-row"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+        <div class="skill-entry"><span class="skill-name">Linux</span>      <div class="skill-dot-row"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+      </div>
+
+      <div class="skill-col">
+        <div class="skill-heading">Databases</div>
+        <div class="skill-entry"><span class="skill-name">PostgreSQL</span> <div class="skill-dot-row"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+        <div class="skill-entry"><span class="skill-name">Redis</span>      <div class="skill-dot-row"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+        <div class="skill-entry"><span class="skill-name">MongoDB</span>    <div class="skill-dot-row"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div></div>
+        <div class="skill-entry"><span class="skill-name">Kafka</span>      <div class="skill-dot-row"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+        <div class="skill-entry"><span class="skill-name">Elasticsearch</span><div class="skill-dot-row"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div></div>
+      </div>
+
+      <div class="skill-col">
+        <div class="skill-heading">Practices</div>
+        <div class="skill-entry"><span class="skill-name">System design</span>  <div class="skill-dot-row"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+        <div class="skill-entry"><span class="skill-name">TDD</span>             <div class="skill-dot-row"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+        <div class="skill-entry"><span class="skill-name">Code review</span>    <div class="skill-dot-row"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+        <div class="skill-entry"><span class="skill-name">Tech writing</span>   <div class="skill-dot-row"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+        <div class="skill-entry"><span class="skill-name">Mentoring</span>      <div class="skill-dot-row"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── CONTACT ─── -->
+  <section id="contact" class="fade-in">
+    <div class="about-side">
+      <span class="label">— Contact</span>
+    </div>
+    <div class="contact-links">
+      <a class="contact-row" href="mailto:jane@example.com">
+        <span class="contact-platform">Email</span>
+        <span class="contact-value">jane@example.com</span>
+        <span class="contact-arrow">→</span>
+      </a>
+      <a class="contact-row" href="https://github.com/janedoe" target="_blank">
+        <span class="contact-platform">GitHub</span>
+        <span class="contact-value">github.com/janedoe</span>
+        <span class="contact-arrow">→</span>
+      </a>
+      <a class="contact-row" href="https://linkedin.com/in/janedoe" target="_blank">
+        <span class="contact-platform">LinkedIn</span>
+        <span class="contact-value">linkedin.com/in/janedoe</span>
+        <span class="contact-arrow">→</span>
+      </a>
+      <a class="contact-row" href="https://janedoe.com" target="_blank">
+        <span class="contact-platform">Web</span>
+        <span class="contact-value">janedoe.com</span>
+        <span class="contact-arrow">→</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer>
+    <span>© 2026 Jane Doe</span>
+    <span>Last updated — May 2026</span>
+  </footer>
+
+  <!-- ─── JS: scroll animations + active nav ─── -->
+  <script>
+    // Intersection observer for fade-in
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Active nav link on scroll
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('#nav ul li a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(sec => {
+        if (window.scrollY >= sec.offsetTop - 120) current = sec.id;
+      });
+      navLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+      });
+    }, { passive: true });
+  </script>
+
+</body>
+</html>
